@@ -1,0 +1,191 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function owns(data) {
+      return signedIn() && data.ownerId == request.auth.uid;
+    }
+
+    function validProduct(data) {
+      return data.keys().hasAll([
+          'id', 'ownerId', 'name', 'category', 'sku', 'quantity',
+          'reorderLevel', 'archived', 'createdAt', 'updatedAt', 'lastChangeId'
+        ])
+        && data.keys().hasOnly([
+          'id', 'ownerId', 'name', 'category', 'sku', 'quantity',
+          'reorderLevel', 'archived', 'createdAt', 'updatedAt', 'lastChangeId'
+        ])
+        && data.id is string
+        && data.ownerId == request.auth.uid
+        && data.name is string && data.name.size() > 0 && data.name.size() <= 80
+        && data.category is string && data.category.size() > 0 && data.category.size() <= 40
+        && data.sku is string && data.sku.size() <= 24
+        && data.quantity is int && data.quantity >= 0 && data.quantity <= 999999
+        && data.reorderLevel is int && data.reorderLevel >= 0 && data.reorderLevel <= 999999
+        && data.archived is bool
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function linkedChangeExists(product, previousQuantity) {
+      let changePath =
+        /databases/$(database)/documents/stockChanges/$(product.lastChangeId);
+      let change = getAfter(changePath).data;
+      return product.lastChangeId is string
+        && existsAfter(changePath)
+        && !product.archived
+        && change.id == product.lastChangeId
+        && change.ownerId == request.auth.uid
+        && change.productId == product.id
+        && change.productName == product.name
+        && change.createdAt == request.time
+        && change.direction in ['add', 'remove']
+        && change.quantity is int && change.quantity > 0 && change.quantity <= 999999
+        && change.reason is string && change.reason.size() > 0 && change.reason.size() <= 80
+        && (
+          (
+            change.direction == 'add'
+            && product.quantity == previousQuantity + change.quantity
+          )
+          || (
+            change.direction == 'remove'
+            && change.quantity <= previousQuantity
+            && product.quantity == previousQuantity - change.quantity
+          )
+        );
+    }
+
+    function validProductCreate(productId) {
+      return validProduct(request.resource.data)
+        && request.resource.data.id == productId
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time
+        && !request.resource.data.archived
+        && (
+          (
+            request.resource.data.quantity == 0
+            && request.resource.data.lastChangeId == null
+          )
+          || (
+            request.resource.data.quantity > 0
+            && linkedChangeExists(request.resource.data, 0)
+            && getAfter(
+              /databases/$(database)/documents/stockChanges/$(request.resource.data.lastChangeId)
+            ).data.direction == 'add'
+            && getAfter(
+              /databases/$(database)/documents/stockChanges/$(request.resource.data.lastChangeId)
+            ).data.quantity == request.resource.data.quantity
+            && getAfter(
+              /databases/$(database)/documents/stockChanges/$(request.resource.data.lastChangeId)
+            ).data.reason == 'Initial stock'
+          )
+        );
+    }
+
+    function validProductUpdate(productId) {
+      return owns(resource.data)
+        && validProduct(request.resource.data)
+        && request.resource.data.id == productId
+        && request.resource.data.ownerId == resource.data.ownerId
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'name', 'category', 'sku', 'reorderLevel', 'archived',
+          'quantity', 'lastChangeId', 'updatedAt'
+        ])
+        && (
+          (
+            request.resource.data.quantity == resource.data.quantity
+            && request.resource.data.lastChangeId == resource.data.lastChangeId
+          )
+          || (
+            request.resource.data.lastChangeId != resource.data.lastChangeId
+            && linkedChangeExists(request.resource.data, resource.data.quantity)
+          )
+        );
+    }
+
+    function validInitialStockChange(changeId) {
+      let productPath =
+        /databases/$(database)/documents/products/$(request.resource.data.productId);
+      let product = getAfter(productPath).data;
+      return !exists(productPath)
+        && existsAfter(productPath)
+        && product.ownerId == request.auth.uid
+        && product.id == request.resource.data.productId
+        && product.lastChangeId == changeId
+        && !product.archived
+        && product.quantity == request.resource.data.quantity
+        && request.resource.data.direction == 'add'
+        && request.resource.data.reason == 'Initial stock';
+    }
+
+    function validExistingStockChange(changeId) {
+      let productPath =
+        /databases/$(database)/documents/products/$(request.resource.data.productId);
+      let productBefore = get(productPath).data;
+      let productAfter = getAfter(productPath).data;
+      return exists(productPath)
+        && productBefore.ownerId == request.auth.uid
+        && productAfter.ownerId == request.auth.uid
+        && productAfter.lastChangeId == changeId
+        && !productAfter.archived
+        && (
+          (
+            request.resource.data.direction == 'add'
+            && productAfter.quantity
+              == productBefore.quantity + request.resource.data.quantity
+          )
+          || (
+            request.resource.data.direction == 'remove'
+            && request.resource.data.quantity <= productBefore.quantity
+            && productAfter.quantity
+              == productBefore.quantity - request.resource.data.quantity
+          )
+        );
+    }
+
+    match /products/{productId} {
+      allow get, list: if owns(resource.data);
+      allow create: if signedIn() && validProductCreate(productId);
+      allow update: if validProductUpdate(productId);
+      allow delete: if false;
+    }
+
+    match /stockChanges/{changeId} {
+      allow get, list: if owns(resource.data);
+      allow create: if signedIn()
+        && request.resource.data.keys().hasAll([
+          'id', 'ownerId', 'productId', 'productName', 'direction',
+          'quantity', 'reason', 'createdAt'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'id', 'ownerId', 'productId', 'productName', 'direction',
+          'quantity', 'reason', 'createdAt'
+        ])
+        && request.resource.data.id == changeId
+        && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.productId is string
+        && request.resource.data.productName is string
+        && request.resource.data.productName.size() > 0
+        && request.resource.data.productName.size() <= 80
+        && request.resource.data.direction in ['add', 'remove']
+        && request.resource.data.quantity is int
+        && request.resource.data.quantity > 0
+        && request.resource.data.quantity <= 999999
+        && request.resource.data.reason is string
+        && request.resource.data.reason.size() > 0
+        && request.resource.data.reason.size() <= 80
+        && request.resource.data.createdAt == request.time
+        && (
+          validInitialStockChange(changeId)
+          || validExistingStockChange(changeId)
+        );
+      allow update, delete: if false;
+    }
+  }
+}

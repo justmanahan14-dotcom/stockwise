@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f2f7ff">
+    <meta name="description" content="A simple inventory manager for small shops. Track products, stock changes, and reorder points in your private workspace.">
+    <title>Stockwise — Inventory, made simple</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <svg class="icon-library" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      <symbol id="i-box" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="M3 8v9l9 5 9-5V8M12 13v9M7.5 5.5l9 5"/></symbol>
+      <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="10" width="8" height="11" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/></symbol>
+      <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12"/><path d="M4 6h.01M4 12h.01M4 18h.01"/></symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4 4"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="M12 19V5m-6 6 6-6 6 6"/></symbol>
+      <symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="M12 5v14m6-6-6 6-6-6"/></symbol>
+      <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></symbol>
+      <symbol id="i-archive" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v10h14V9m-9 4h4"/></symbol>
+      <symbol id="i-edit" viewBox="0 0 24 24"><path d="m15 5 4 4M4 20l4-.8L19 8a2.1 2.1 0 0 0-3-3L5 16l-1 4Z"/></symbol>
+      <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 4.7 2.7 18a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 4.7a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4m0 4h.01"/></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="m18 6-12 12M6 6l12 12"/></symbol>
+      <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Zm7 12 .9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15Z"/></symbol>
+      <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5"/><path d="M4 17v3h16v-3"/></symbol>
+      <symbol id="i-logout" viewBox="0 0 24 24"><path d="M10 17l5-5-5-5m5 5H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></symbol>
+      <symbol id="i-login" viewBox="0 0 24 24"><path d="m14 17 5-5-5-5m5 5H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></symbol>
+      <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+      <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"/><path d="m9 12 2 2 4-4"/></symbol>
+      <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></symbol>
+      <symbol id="i-magic" viewBox="0 0 24 24"><path d="m15 4 5 5M3 21l3.5-.8L20 6.7a2.1 2.1 0 0 0-3-3L3.8 17.5 3 21Z"/><path d="m5 5 1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2Zm13 10 1.2 2.8L22 19l-2.8 1.2L18 23l-1.2-2.8L14 19l2.8-1.2L18 15Z"/></symbol>
+      <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m8 14 4-4 4 3 5-7"/></symbol>
+    </svg>
+
+    <div class="landing-page" id="landing-page">
+      <header class="landing-nav">
+        <a class="landing-brand" href="#home" aria-label="Stockwise home">
+          <span class="landing-brand-mark"><svg class="icon"><use href="#i-box"/></svg></span>
+          <span>stockwise<span class="brand-period">.</span></span>
+        </a>
+        <nav class="landing-nav-links" aria-label="Landing page navigation">
+          <a href="#features">Features</a>
+          <a href="#how-it-works">How it works</a>
+        </nav>
+        <div class="landing-nav-actions">
+          <button type="button" class="landing-signin" id="landing-signin">Sign in</button>
+          <button type="button" class="landing-nav-cta" id="landing-get-started">Get started <svg class="icon"><use href="#i-arrow-right"/></svg></button>
+        </div>
+      </header>
+
+      <main>
+        <section class="landing-hero" id="home">
+          <div class="hero-copy reveal">
+            <div class="hero-kicker"><span class="hero-kicker-dot"></span> A calmer way to run your shop</div>
+            <h1>Your stock,<br><span>all in good</span><br><span class="hero-highlight">hands.</span></h1>
+            <p class="hero-description">A little more clarity for your shelves. Keep tabs on every product, catch low stock early, and get back to the work you love.</p>
+            <div class="hero-actions">
+              <button type="button" class="hero-primary" id="hero-get-started">Get started for free <svg class="icon"><use href="#i-arrow-right"/></svg></button>
+            </div>
+            <div class="hero-assurance"><span class="assurance-check"><svg class="icon"><use href="#i-check"/></svg></span> Free to start <span class="assurance-separator">·</span> No credit card needed <span class="assurance-separator">·</span> Made for small shops</div>
+          </div>
+
+          <div class="hero-art reveal" data-delay="120">
+            <div class="hero-orbit orbit-one"></div>
+            <div class="hero-orbit orbit-two"></div>
+            <span class="hero-sparkle sparkle-one">✳</span>
+            <span class="hero-sparkle sparkle-two">✦</span>
+            <span class="hero-sparkle sparkle-three">✳</span>
+            <div class="floating-note note-low"><span class="note-emoji">🌱</span><span><strong>Easy does it</strong><small>Little shop, big plans</small></span></div>
+            <div class="preview-card">
+              <div class="preview-topbar">
+                <div class="preview-brand"><span class="preview-brand-dot"></span> your little shop</div>
+                <span class="preview-avatar">S</span>
+              </div>
+              <div class="preview-greeting"><span>MONDAY, OCTOBER 21</span><strong>Looking good, Sam <span>✳</span></strong><small>A little snapshot of your shelves.</small></div>
+              <div class="preview-stats">
+                <div class="preview-stat"><span class="preview-stat-icon icon-products"><svg class="icon"><use href="#i-box"/></svg></span><small>Products</small><strong>24</strong></div>
+                <div class="preview-stat"><span class="preview-stat-icon icon-units"><svg class="icon"><use href="#i-chart"/></svg></span><small>On your shelves</small><strong>186</strong></div>
+                <div class="preview-stat preview-stat-low"><span class="preview-stat-icon icon-low"><svg class="icon"><use href="#i-spark"/></svg></span><small>Low stock</small><strong>03</strong></div>
+              </div>
+              <div class="preview-list-head"><span>Your favorites</span><span>Stock</span></div>
+              <div class="preview-product"><span class="preview-product-icon product-peach">☕</span><span class="preview-product-name"><strong>Sunday morning blend</strong><small>Pantry · PAN-042</small></span><span class="preview-stock stock-ok">18</span></div>
+              <div class="preview-product"><span class="preview-product-icon product-blue">🫒</span><span class="preview-product-name"><strong>Olive oil, small batch</strong><small>Pantry · PAN-018</small></span><span class="preview-stock stock-low">4 left</span></div>
+              <div class="preview-product"><span class="preview-product-icon product-lilac">🕯️</span><span class="preview-product-name"><strong>Slow Sunday candle</strong><small>Home · HOM-105</small></span><span class="preview-stock stock-ok">12</span></div>
+              <div class="preview-footer"><span><span class="preview-live-dot"></span> All tucked in</span><span>Just now</span></div>
+            </div>
+            <div class="floating-note note-restock"><span class="restock-icon"><svg class="icon"><use href="#i-spark"/></svg></span><span><strong>A gentle heads-up</strong><small>Olive oil is running low</small></span></div>
+          </div>
+          <a class="hero-scroll" href="#features"><span></span> A little more below</a>
+        </section>
+
+        <section class="landing-trust reveal" aria-label="What Stockwise helps you do">
+          <span>Everything your shelves need,</span>
+          <div class="trust-items"><span><svg class="icon"><use href="#i-check"/></svg> Stay organized</span><span><svg class="icon"><use href="#i-check"/></svg> Catch low stock</span><span><svg class="icon"><use href="#i-check"/></svg> Know what changed</span></div>
+        </section>
+
+        <section class="landing-features" id="features">
+          <div class="section-intro reveal"><span class="section-kicker">ROOM TO BREATHE</span><h2>Less counting.<br><span>More growing.</span></h2><p>The everyday essentials for a shop that runs a little smoother.</p></div>
+          <div class="feature-grid">
+            <article class="feature-card feature-card-blue reveal"><span class="feature-icon"><svg class="icon"><use href="#i-box"/></svg></span><span class="feature-index">01 / KEEP IT TOGETHER</span><h3>One happy home<br>for your stock.</h3><p>All your products, categories, and quantities in one tidy place. Add, update, and archive as your little shop grows.</p><span class="feature-doodle doodle-box">▧</span></article>
+            <article class="feature-card feature-card-lilac reveal" data-delay="100"><span class="feature-icon"><svg class="icon"><use href="#i-spark"/></svg></span><span class="feature-index">02 / A FRIENDLY NUDGE</span><h3>A heads-up before<br>you run out.</h3><p>Set a reorder point for each product. Stockwise highlights what’s getting low, so replenishing feels like less of a surprise.</p><span class="feature-doodle doodle-star">✳</span></article>
+            <article class="feature-card feature-card-peach reveal" data-delay="200"><span class="feature-icon"><svg class="icon"><use href="#i-clock"/></svg></span><span class="feature-index">03 / NOTHING GETS LOST</span><h3>Every little change,<br>remembered.</h3><p>Keep a clear history of what came in, what went out, and why. A little context goes a long way.</p><span class="feature-doodle doodle-heart">♡</span></article>
+          </div>
+        </section>
+
+        <section class="landing-how" id="how-it-works">
+          <div class="how-illustration reveal"><div class="how-cloud cloud-a"></div><div class="how-cloud cloud-b"></div><div class="how-board"><div class="how-board-head"><span></span><span></span><span></span></div><div class="how-board-title">your shop, in a good place</div><div class="how-board-bars"><i></i><i></i><i></i><i></i><i></i></div><div class="how-board-check"><svg class="icon"><use href="#i-check"/></svg></div></div><span class="how-float how-float-a">✳</span><span class="how-float how-float-b">♡</span></div>
+          <div class="how-copy reveal" data-delay="100"><span class="section-kicker">SMALL STEPS, NICELY DONE</span><h2>Up and running<br>in <span>no time.</span></h2><p>Make an account, add a few favorites, and you’re off. Your own inventory stays private to your account and follows you wherever you sign in.</p><div class="how-points"><span><svg class="icon"><use href="#i-check"/></svg> Your own private workspace</span><span><svg class="icon"><use href="#i-check"/></svg> Works on desktop and phone</span><span><svg class="icon"><use href="#i-check"/></svg> Start with a free account</span></div><button type="button" class="how-link" id="how-get-started">Make yourself at home <svg class="icon"><use href="#i-arrow-right"/></svg></button></div>
+        </section>
+
+        <section class="landing-cta reveal">
+          <div class="cta-decoration cta-decoration-one"></div><div class="cta-decoration cta-decoration-two"></div>
+          <span class="cta-spark">✳</span>
+          <span class="section-kicker">YOUR SHOP HAS THIS</span>
+          <h2>A little less juggling.<br><span>A lot more joy.</span></h2>
+          <p>Let’s make room for the good stuff.</p>
+          <div class="cta-actions"><button type="button" class="cta-primary" id="footer-get-started">Create your free account <svg class="icon"><use href="#i-arrow-right"/></svg></button></div>
+        </section>
+      </main>
+
+      <footer class="landing-footer">
+        <a class="landing-brand" href="#home"><span class="landing-brand-mark"><svg class="icon"><use href="#i-box"/></svg></span><span>stockwise<span class="brand-period">.</span></span></a>
+        <span>Made for little shops with big ideas <span class="footer-heart">♡</span></span>
+        <span>Your inventory stays private to your account.</span>
+      </footer>
+    </div>
+
+    <div class="app-shell" id="app-shell" hidden>
+      <aside class="sidebar">
+        <a class="brand" href="#overview" aria-label="Stockwise home">
+          <span class="brand-mark"><svg class="icon"><use href="#i-box"/></svg></span>
+          <span>stockwise<span class="brand-period">.</span></span>
+        </a>
+
+        <div class="workspace-label">WORKSPACE</div>
+        <nav class="side-nav" aria-label="Main navigation">
+          <a class="nav-link active" href="#overview" aria-label="Overview"><svg class="icon"><use href="#i-grid"/></svg><span>Overview</span></a>
+          <a class="nav-link" href="#inventory" aria-label="Inventory"><svg class="icon"><use href="#i-box"/></svg><span>Inventory</span><span class="nav-count" id="nav-product-count">0</span></a>
+          <a class="nav-link" href="#activity" aria-label="Activity"><svg class="icon"><use href="#i-clock"/></svg><span>Activity</span></a>
+        </nav>
+
+        <div class="sidebar-bottom">
+          <div class="profile-row">
+            <button type="button" class="avatar avatar-button profile-button" id="avatar" aria-label="View profile"><span data-profile-initial>U</span></button>
+            <div class="profile-info" id="profile-info"><strong>Your account</strong><span>Private workspace</span></div>
+            <button class="icon-button profile-action" id="account-button" aria-label="Account options"><svg class="icon"><use href="#i-chevron"/></svg></button>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main-content" id="overview">
+        <header class="topbar">
+          <div class="breadcrumb"><span>Workspace</span><span class="breadcrumb-slash">/</span><strong>Overview</strong></div>
+          <div class="topbar-actions"><span class="workspace-pill" id="workspace-mode"><span></span> Live workspace</span><button type="button" class="avatar avatar-button topbar-profile-avatar profile-button" aria-label="View profile"><span data-profile-initial>U</span></button><button class="sign-in-button" id="sign-in-button"><svg class="icon"><use href="#i-login"/></svg> Sign in</button></div>
+        </header>
+
+        <div class="page-content">
+          <section class="page-heading">
+            <div>
+              <p class="eyebrow"><span class="eyebrow-dot"></span> MONDAY, OCTOBER 21</p>
+              <h1>Good morning, there <span class="wave" aria-hidden="true">✳</span></h1>
+              <p class="heading-subtitle">Here’s what’s happening with your inventory today.</p>
+            </div>
+            <button class="primary-button" id="add-product-button"><svg class="icon"><use href="#i-plus"/></svg> Add product</button>
+          </section>
+
+          <section class="stats-grid" aria-label="Inventory summary">
+            <article class="stat-card">
+              <div class="stat-top"><span class="stat-label">Total products</span><span class="stat-icon stat-icon-green"><svg class="icon"><use href="#i-box"/></svg></span></div>
+              <div class="stat-value" id="stat-products">—</div>
+              <div class="stat-foot"><span class="stat-foot-dot green"></span> Active products in your shop</div>
+            </article>
+            <article class="stat-card">
+              <div class="stat-top"><span class="stat-label">Units in stock</span><span class="stat-icon stat-icon-blue"><svg class="icon"><use href="#i-list"/></svg></span></div>
+              <div class="stat-value" id="stat-units">—</div>
+              <div class="stat-foot"><span class="stat-foot-dot blue"></span> Across all active products</div>
+            </article>
+            <article class="stat-card">
+              <div class="stat-top"><span class="stat-label">Need reordering</span><span class="stat-icon stat-icon-amber"><svg class="icon"><use href="#i-alert"/></svg></span></div>
+              <div class="stat-value" id="stat-low">—</div>
+              <div class="stat-foot" id="stat-low-foot"><span class="stat-foot-dot amber"></span> At or below reorder point</div>
+            </article>
+            <article class="stat-card">
+              <div class="stat-top"><span class="stat-label">Stock changes</span><span class="stat-icon stat-icon-purple"><svg class="icon"><use href="#i-clock"/></svg></span></div>
+              <div class="stat-value" id="stat-changes">—</div>
+              <div class="stat-foot" id="stat-changes-foot"><span class="stat-foot-dot purple"></span> Across your workspace</div>
+            </article>
+          </section>
+
+          <div class="content-grid">
+            <section class="panel inventory-panel" id="inventory">
+              <div class="panel-heading">
+                <div>
+                  <div class="section-title-row"><h2>Inventory</h2><span class="subtle-count" id="inventory-count">0 products</span></div>
+                  <p class="panel-description">Keep an eye on what’s on your shelves.</p>
+                </div>
+                <button class="filter-button" id="low-stock-filter" aria-pressed="false"><svg class="icon"><use href="#i-alert"/></svg> Low stock <span class="filter-count" id="low-filter-count">0</span></button>
+              </div>
+
+              <div class="toolbar">
+                <label class="search-field"><svg class="icon"><use href="#i-search"/></svg><input id="search-input" type="search" placeholder="Search products..." autocomplete="off"><kbd>/</kbd></label>
+                <label class="select-wrap"><span class="visually-hidden">Filter by category</span><select id="category-filter"><option value="">All categories</option></select><svg class="icon"><use href="#i-chevron"/></svg></label>
+                <button class="archive-filter" id="archive-filter" aria-pressed="false"><svg class="icon"><use href="#i-archive"/></svg><span>Archived</span><span id="archived-count">0</span></button>
+              </div>
+
+              <div class="inventory-table-wrap" id="inventory-region" aria-live="polite">
+                <div class="loading-state" id="loading-state"><span class="loading-spinner"></span> Loading your inventory…</div>
+                <table class="inventory-table" id="inventory-table" hidden>
+                  <thead><tr><th scope="col">PRODUCT</th><th scope="col">CATEGORY</th><th scope="col">IN STOCK</th><th scope="col">STATUS</th><th scope="col"><span class="visually-hidden">Actions</span></th></tr></thead>
+                  <tbody id="inventory-body"></tbody>
+                </table>
+                <div class="empty-state" id="empty-state" hidden><span class="empty-icon"><svg class="icon"><use href="#i-search"/></svg></span><strong id="empty-title">No products found</strong><p id="empty-description">Try a different search or add your first product.</p><button class="text-button" id="empty-add-button">Add a product <span aria-hidden="true">→</span></button></div>
+                <div class="error-state" id="error-state" hidden><span class="empty-icon error-icon"><svg class="icon"><use href="#i-alert"/></svg></span><strong>Couldn’t load your inventory</strong><p id="error-description">Please check your connection and try again.</p><button class="text-button" id="retry-load">Try again <span aria-hidden="true">→</span></button></div>
+              </div>
+              <div class="table-footer"><span id="table-summary">Showing 0 products</span><button class="footer-link" id="export-button"><svg class="icon"><use href="#i-download"/></svg> Export CSV</button></div>
+            </section>
+
+            <aside class="panel activity-panel" id="activity">
+              <div class="activity-header"><div><h2>Recent activity</h2><p class="panel-description">A little history goes a long way.</p></div><span class="activity-live"><span></span> LIVE</span></div>
+              <div class="activity-list" id="activity-list"></div>
+              <div class="activity-footer"><span class="activity-footer-icon"><svg class="icon"><use href="#i-clock"/></svg></span><span>Every stock change is recorded here.</span></div>
+            </aside>
+          </div>
+
+          <footer class="page-footer"><span>Made for little shops with big ideas.</span><span><span class="footer-dot"></span><span id="sync-note">Synced to your private Firebase workspace</span></span></footer>
+        </div>
+      </main>
+    </div>
+
+    <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
+
+    <dialog class="app-dialog" id="product-dialog" aria-labelledby="product-dialog-title">
+      <form id="product-form" novalidate>
+        <div class="dialog-heading"><div><p class="dialog-eyebrow">YOUR INVENTORY</p><h2 id="product-dialog-title">Add a product</h2><p class="dialog-subtitle">A few details and it’s on the shelf.</p></div><button type="button" class="icon-button close-dialog" data-close-dialog aria-label="Close"><svg class="icon"><use href="#i-close"/></svg></button></div>
+        <input type="hidden" name="productId">
+        <label class="form-field">Product name<input name="name" required maxlength="80" placeholder="e.g. House blend coffee"><span class="field-error" data-error="name"></span></label>
+        <div class="form-row"><label class="form-field">Category<select name="category" required><option value="" disabled selected>Select category</option><option>Pantry</option><option>Drinks</option><option>Home goods</option><option>Personal care</option><option>Accessories</option><option>Other</option></select><span class="field-error" data-error="category"></span></label><label class="form-field">SKU <span class="optional">(optional)</span><input name="sku" maxlength="24" placeholder="e.g. PAN-042"></label></div>
+        <div class="form-row"><label class="form-field" id="quantity-field">Starting stock<input name="quantity" type="number" min="0" max="999999" step="1" required value="0"><span class="field-error" data-error="quantity"></span><span class="form-hint" id="quantity-hint"></span></label><label class="form-field">Reorder point<input name="reorderLevel" type="number" min="0" max="999999" step="1" required value="5"><span class="field-error" data-error="reorderLevel"></span></label></div>
+        <div class="dialog-error" id="product-form-error" role="alert"></div>
+        <div class="dialog-actions"><button type="button" class="secondary-button" data-close-dialog>Cancel</button><button type="submit" class="primary-button" id="product-submit-button">Add product</button></div>
+      </form>
+    </dialog>
+
+    <dialog class="app-dialog info-dialog profile-dialog" id="profile-dialog" aria-labelledby="profile-dialog-title">
+      <div class="dialog-heading"><div><p class="dialog-eyebrow">YOUR ACCOUNT</p><h2 id="profile-dialog-title">Your profile</h2><p class="dialog-subtitle">Your personal details.</p></div><button type="button" class="icon-button close-dialog" data-close-dialog aria-label="Close"><svg class="icon"><use href="#i-close"/></svg></button></div>
+      <div class="profile-details">
+        <div class="profile-dialog-avatar" id="profile-dialog-avatar"><span data-profile-initial>U</span></div>
+        <div class="profile-detail-copy"><strong id="profile-display-name">Your name</strong><span id="profile-email"></span></div>
+      </div>
+      <div class="dialog-actions"><button type="button" class="primary-button" data-close-dialog>Done</button></div>
+    </dialog>
+
+    <dialog class="app-dialog stock-dialog" id="stock-dialog" aria-labelledby="stock-dialog-title">
+      <form id="stock-form" novalidate>
+        <div class="dialog-heading"><div><p class="dialog-eyebrow">INVENTORY UPDATE</p><h2 id="stock-dialog-title">Update stock</h2><p class="dialog-subtitle" id="stock-product-name"></p></div><button type="button" class="icon-button close-dialog" data-close-dialog aria-label="Close"><svg class="icon"><use href="#i-close"/></svg></button></div>
+        <input type="hidden" name="productId">
+        <div class="stock-current"><span>Current stock</span><strong id="stock-current-value">0</strong><span>units</span></div>
+        <label class="form-field">Change type<select name="direction"><option value="add">Add stock</option><option value="remove">Remove stock</option></select></label>
+        <label class="form-field">Quantity<input name="quantity" type="number" min="1" max="999999" step="1" required placeholder="How many units?"><span class="field-error" data-error="quantity"></span></label>
+        <label class="form-field">Reason<select name="reason" required><option value="" disabled selected>Select a reason</option><option>Restock delivery</option><option>Sale</option><option>Damaged</option><option>Correction</option><option>Other</option></select><span class="field-error" data-error="reason"></span></label>
+        <div class="dialog-error" id="stock-form-error" role="alert"></div>
+        <div class="dialog-actions"><button type="button" class="secondary-button" data-close-dialog>Cancel</button><button type="submit" class="primary-button">Save stock change</button></div>
+      </form>
+    </dialog>
+
+    <dialog class="app-dialog info-dialog" id="account-dialog" aria-labelledby="account-dialog-title">
+      <div class="dialog-heading"><div><p class="dialog-eyebrow">STOCKWISE ACCOUNT</p><h2 id="account-dialog-title">Sign in to your shop</h2><p class="dialog-subtitle" id="account-dialog-subtitle">Use your account to keep your inventory synced.</p></div><button type="button" class="icon-button close-dialog" data-close-dialog aria-label="Close"><svg class="icon"><use href="#i-close"/></svg></button></div>
+      <div class="account-note account-note-muted" id="auth-config-warning" hidden><span class="account-note-icon"><svg class="icon"><use href="#i-alert"/></svg></span><div><strong>Account sign-in needs setup</strong><p id="auth-config-message">Add your Firebase web app configuration to enable accounts.</p></div></div>
+      <form id="auth-form" novalidate>
+        <label class="form-field" id="signup-name-field" hidden>Your name<input name="displayName" type="text" maxlength="60" autocomplete="name" placeholder="How should we greet you?"></label>
+        <label class="form-field">Email address<input name="email" type="email" required maxlength="254" autocomplete="email" placeholder="you@yourshop.com"></label>
+        <label class="form-field">Password<input name="password" type="password" required minlength="8" maxlength="128" autocomplete="current-password" placeholder="At least 8 characters"></label>
+        <p class="forgot-password-line"><button type="button" class="text-button" id="forgot-password">Forgot password?</button></p>
+        <div class="dialog-error" id="auth-form-error" role="alert"></div>
+        <button type="submit" class="primary-button auth-submit" id="auth-submit">Sign in</button>
+      </form>
+      <p class="auth-toggle" id="auth-toggle-line">New to Stockwise? <button type="button" class="text-button" id="auth-toggle">Create an account</button></p>
+      <div class="account-note account-note-muted signed-in-note" id="signed-in-note" hidden><span class="account-note-icon"><svg class="icon"><use href="#i-box"/></svg></span><div><strong id="signed-in-email"></strong><p>Your products and stock history sync securely to your shop.</p></div></div>
+      <div class="dialog-actions"><button type="button" class="secondary-button" id="account-signout" hidden>Sign out</button><button type="button" class="primary-button" data-close-dialog>Continue</button></div>
+    </dialog>
+
+    <script type="module" src="/landing.js"></script>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
